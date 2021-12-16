@@ -5,14 +5,19 @@
 #include <string.h>
 #include <vector>
 #include <cstdio>
+#include <algorithm>
+#include <ctype.h>
+#include <stdio.h>
+#include <cstdint>
+#include <filesystem>
 
 
 using namespace std;
 
-int idZalogowanegoUzytkownika =0;
 
-int max_id =0;
+int max_id = 0;
 int max_id_uzytkownika = 0;
+int idZalogowanegoUzytkownika =0;
 
 struct Uzytkownik
 {
@@ -32,12 +37,7 @@ void wczytajDaneZPlikuDoStrukturyUzytkownicy (vector <Uzytkownik> &uzytkownicy)
     fstream plik;
     plik.open("Uzytkownicy.txt", ios::in);
 
-    if (plik.good() == false)
-    {
-        cout<<"Nie udalo sie otworzyc pliku";
-        Sleep(1000);
-    }
-    else
+    if (plik.good())
     {
 
         while (getline(plik, linia))
@@ -50,15 +50,14 @@ void wczytajDaneZPlikuDoStrukturyUzytkownicy (vector <Uzytkownik> &uzytkownicy)
             }
 
             char *pch;
-            string tablica[6];
+            string tablica[3];
             int i =0;
 
-            pch = strtok (linijka, "|");
+            pch = strtok (linijka, "|\n\r\t");
             while (pch != NULL && i<3)
             {
-
                 tablica[i] = ("%s", pch);
-                pch = strtok (NULL, "|");
+                pch = strtok (NULL, "|\n\r\t");
                 i++;
             }
 
@@ -85,7 +84,7 @@ void wczytajDaneZPlikuDoStrukturyUzytkownicy (vector <Uzytkownik> &uzytkownicy)
 int logowanie (vector <Uzytkownik> &uzytkownicy)
 {
 
-    string login, haslo;
+    string login;
     cout << "Podaj login: "<<endl;
     cin >> login;
 
@@ -99,9 +98,13 @@ int logowanie (vector <Uzytkownik> &uzytkownicy)
             for (int j=0; j<3; j++)
             {
                 cout << "Podaj haslo. Pozostalo prob " << 3-j << endl;
+                string haslo;
+                cin.clear();
                 cin >> haslo;
 
-                if (uzytkownicy[i].haslo == haslo)
+
+                string hasloUzytkownika = uzytkownicy[i].haslo;
+                if (hasloUzytkownika == haslo)
                 {
                     cout << "Zalogowales sie."<< endl;
                     Sleep(1000);
@@ -215,7 +218,7 @@ struct Adresat
 };
 
 
-void dodajAdresataDoKsiazkiAdresowej (vector <Adresat> &adresaci)
+void dodajAdresataDoKsiazkiAdresowej (vector <Adresat> &Adresaci)
 {
     string imie, nazwisko, numerTelefonu, adres, email;
     system("cls");
@@ -244,7 +247,7 @@ void dodajAdresataDoKsiazkiAdresowej (vector <Adresat> &adresaci)
     adresat.id = (max_id + 1 );
     adresat.email = email;
 
-    adresaci.push_back(adresat);
+    Adresaci.push_back(adresat);
 
     max_id++;
 
@@ -269,7 +272,7 @@ void dodajAdresataDoKsiazkiAdresowej (vector <Adresat> &adresaci)
 
 }
 
-void wyswietlAdresatowOPodanymImieniu (vector <Adresat> adresaci)
+void wyswietlAdresatowOPodanymImieniu (vector <Adresat> &Adresaci)
 {
     string imie;
     system("cls");
@@ -277,23 +280,23 @@ void wyswietlAdresatowOPodanymImieniu (vector <Adresat> adresaci)
     cin >> imie;
 
 
-    for (int i=0; i < adresaci.size(); i++)
+    for (int i=0; i < Adresaci.size(); i++)
     {
-        if (adresaci[i].imie == imie)
+        if (Adresaci[i].imie == imie)
         {
-            cout << adresaci[i].id<< endl;
-            cout << adresaci[i].imie<<endl;
-            cout << adresaci[i].nazwisko<< endl;
-            cout << adresaci[i].numerTelefonu << endl;
-            cout << adresaci[i].adres << endl;
-            cout << adresaci[i].email << endl << endl;
+            cout << Adresaci[i].id<< endl;
+            cout << Adresaci[i].imie<<endl;
+            cout << Adresaci[i].nazwisko<< endl;
+            cout << Adresaci[i].numerTelefonu << endl;
+            cout << Adresaci[i].adres << endl;
+            cout << Adresaci[i].email << endl << endl;
         }
     }
-    Sleep(3000);
+   Sleep(3000);
 }
 
 
-void wyswietlAdresatowOPodanymNazwisku (vector <Adresat> adresaci)
+void wyswietlAdresatowOPodanymNazwisku (vector <Adresat> &Adresaci)
 {
     string nazwisko;
     system("cls");
@@ -301,41 +304,40 @@ void wyswietlAdresatowOPodanymNazwisku (vector <Adresat> adresaci)
     cin >> nazwisko;
 
 
-    for (int i=0; i<adresaci.size(); i++)
+    for (int i=0; i<Adresaci.size(); i++)
     {
 
-        if (adresaci[i].nazwisko == nazwisko)
+        if (Adresaci[i].nazwisko == nazwisko)
         {
-            cout << adresaci[i].id<< endl;
-            cout << adresaci[i].imie<<endl;
-            cout << adresaci[i].nazwisko<< endl;
-            cout << adresaci[i].numerTelefonu << endl;
-            cout << adresaci[i].adres << endl;
-            cout << adresaci[i].email << endl << endl;
+            cout << Adresaci[i].id<< endl;
+            cout << Adresaci[i].imie<<endl;
+            cout << Adresaci[i].nazwisko<< endl;
+            cout << Adresaci[i].numerTelefonu << endl;
+            cout << Adresaci[i].adres << endl;
+            cout << Adresaci[i].email << endl << endl;
         }
     }
     Sleep(3000);
 
 }
 
-void wyswietlDaneWszystkichAdresatow (vector <Adresat> adresaci)
+void wyswietlDaneWszystkichAdresatow (vector <Adresat> &Adresaci)
 {
     int i =0;
     system("cls");
-    while (i < adresaci.size())
+    while (i < Adresaci.size())
     {
 
-        cout << adresaci[i].id << endl;
-        cout << adresaci[i].imie <<endl;
-        cout << adresaci[i].nazwisko << endl;
-        cout << adresaci[i].numerTelefonu << endl;
-        cout << adresaci[i].adres << endl ;
-        cout << adresaci[i].email << endl << endl;
+        cout << Adresaci[i].id << endl;
+        cout << Adresaci[i].imie <<endl;
+        cout << Adresaci[i].nazwisko << endl;
+        cout << Adresaci[i].numerTelefonu << endl;
+        cout << Adresaci[i].adres << endl ;
+        cout << Adresaci[i].email << endl << endl;
 
         i++;
     }
-
-    Sleep(3000);
+  Sleep(3000);
 }
 
 void ZapiszStruktureAdresaciDoPliku (vector <Adresat> &Adresaci)
@@ -366,16 +368,11 @@ void wczytajDaneZPlikuDoStrukturyAdresaci (vector <Adresat> &Adresaci)
     fstream plik;
     plik.open("Adresaci.txt", ios::in);
 
-    if (plik.good() == false)
+    if (plik.good())
     {
-        cout<<"Nie udalo sie otworzyc pliku";
-        Sleep(1000);
-    }
-    else
-    {
-
         while (getline(plik, linia))
         {
+            cin.ignore();
             char linijka[linia.length()];
 
             for (int j =0; j<linia.length(); j++)
@@ -384,10 +381,10 @@ void wczytajDaneZPlikuDoStrukturyAdresaci (vector <Adresat> &Adresaci)
             }
 
             char *pch;
-            string tablica[6];
+            string tablica[7];
             int i =0;
 
-            pch = strtok (linijka, "|");
+            pch = strtok (linijka, "|\n\r\t");
             while (pch != NULL && i<7)
             {
 
@@ -411,13 +408,11 @@ void wczytajDaneZPlikuDoStrukturyAdresaci (vector <Adresat> &Adresaci)
 
             adresat.adres = tablica[6];
 
-            if (pomocniczaZmienna == idZalogowanegoUzytkownika)
-            {
-                Adresaci.push_back(adresat);
+            if (adresat.id > max_id)
+                max_id = adresat.id;
 
-                if (adresat.id > max_id)
-                    max_id = adresat.id;
-            }
+            if (pomocniczaZmienna == idZalogowanegoUzytkownika)
+                Adresaci.push_back(adresat);
 
 
             nr_linii++;
@@ -439,7 +434,7 @@ void usunAdresata (vector <Adresat> &Adresaci)
     {
         if (Adresaci[i].id == id)
         {
-            cout<< "Czy na pewno chcesz usunac wybranego adresata? Jeœli tak, wpisz litere 't'." <<endl;
+            cout<< "Czy na pewno chcesz usunac wybranego adresata? Jesli tak, wpisz litere 't'." <<endl;
             cout<< "Jesli nie, nacisnij dowolny przycisk (inny niz litera 't')."<<endl;
 
 
@@ -548,6 +543,7 @@ void edytujAdresata (vector <Adresat> &Adresaci)
             else if (wybor == '6')
             {
                 system("cls");
+                break;
             }
 
             else
@@ -555,10 +551,77 @@ void edytujAdresata (vector <Adresat> &Adresaci)
                 cout << "Wybierz poprawny numer dostepnych opcji." << endl;
                 Sleep(1500);
             }
-        }
-    }
 
-    ZapiszStruktureAdresaciDoPliku(Adresaci);
+            int nr_linii = 1;
+
+            string linia;
+            Adresat adresat;
+
+            fstream plik;
+            plik.open("Adresaci.txt", ios::in);
+            fstream nowyPlik;
+            nowyPlik.open("Adresaci_tymczasowy.txt",ios::out);
+
+//            cin.clear();
+
+                while ( getline( plik, linia ) )
+                {
+                    cout << "I do get here" <<endl;
+                    Sleep(1000);
+                    char linijka[linia.length()];
+
+                    for (int j =0; j<linia.length(); j++)
+                    {
+                        linijka[j] = linia[j];
+                    }
+
+                    char *pch;
+                    string tablica[7];
+                    int i =0;
+
+                    pch = strtok (linijka, "|\n\r\t");
+                    while (pch != NULL && i<7)
+                    {
+
+                        tablica[i] = ("%s", pch);
+                        pch = strtok (NULL, "|");
+                        i++;
+                    }
+
+                    adresat.id = atoi(tablica[0].c_str());
+
+                    int pomocniczaZmienna = atoi(tablica[1].c_str());
+
+                    adresat.imie = tablica[2];
+
+                    adresat.nazwisko = tablica[3];
+
+                    adresat.numerTelefonu = tablica[4];
+
+                    adresat.email = tablica[5];
+
+                    adresat.adres = tablica[6];
+
+
+                    if ((adresat.id == id) && (pomocniczaZmienna == idZalogowanegoUzytkownika))
+                    {
+                      nowyPlik <<Adresaci[i].id<<"|"<<idZalogowanegoUzytkownika<<"|"<<Adresaci[i].imie<<"|"<<Adresaci[i].nazwisko<<"|"<<Adresaci[i].numerTelefonu<<"|"<<Adresaci[i].adres<<"|"<<Adresaci[i].email<<"|"<<endl;
+                    }
+
+                    else
+                        nowyPlik <<linia<< endl;
+
+                    nr_linii++;
+
+                }
+            plik.close();
+            nowyPlik.close();
+            remove( "Adresaci.txt" );
+            rename( "Adresaci_tymczasowy.txt" , "Adresaci.txt" );
+
+            }
+        }
+
 }
 
 
@@ -567,16 +630,15 @@ int main()
 {
     vector <Uzytkownik> uzytkownicy;
     vector <Adresat> Adresaci;
-    wczytajDaneZPlikuDoStrukturyAdresaci(Adresaci);
+
     wczytajDaneZPlikuDoStrukturyUzytkownicy(uzytkownicy);
 
 
-    if (idZalogowanegoUzytkownika ==0)
+    while(true)
     {
-        char wybor;
-
-        while(true)
+        if(idZalogowanegoUzytkownika==0)
         {
+            char wybor;
             system ("cls");
             cout << "1. Logowanie" << endl;
             cout << "2. Rejestracja" << endl;
@@ -589,6 +651,8 @@ int main()
             {
 
                 idZalogowanegoUzytkownika = logowanie (uzytkownicy);
+                wczytajDaneZPlikuDoStrukturyAdresaci(Adresaci);
+
             }
 
             else if (wybor == '2')
@@ -602,16 +666,22 @@ int main()
             {
                 exit(0);
             }
+            else
+            {
+                cout << "Wybierz poprawny numer dostepnych opcji." << endl;
+                Sleep(1500);
+            }
+
         }
-    }
 
-    else
-    {
 
-        char wybor;
 
-        while(true)
+        else
         {
+
+            //wczytajDaneZPlikuDoStrukturyAdresaci(Adresaci);
+
+            char wybor;
             system ("cls");
             cout << "1. Dodaj adresata." << endl;
             cout << "2. Wyszukaj po imieniu." << endl;
@@ -625,6 +695,7 @@ int main()
 
             cout<< endl <<"Twoj wybor: "<<endl;
             cin >> wybor;
+
 
 
             if(wybor == '1')
@@ -658,6 +729,7 @@ int main()
             else if (wybor == '6')
             {
                 edytujAdresata(Adresaci);
+
             }
 
             else if (wybor == '7')
@@ -667,7 +739,8 @@ int main()
 
             else if (wybor == '8')
             {
-                idZalogowanegoUzytkownika =0;
+                idZalogowanegoUzytkownika = 0;
+
             }
 
 
@@ -685,5 +758,7 @@ int main()
         }
     }
 
+
     return 0;
 }
+
