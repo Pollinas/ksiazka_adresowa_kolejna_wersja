@@ -292,7 +292,7 @@ void wyswietlAdresatowOPodanymImieniu (vector <Adresat> &Adresaci)
             cout << Adresaci[i].email << endl << endl;
         }
     }
-   Sleep(3000);
+    Sleep(3000);
 }
 
 
@@ -337,25 +337,9 @@ void wyswietlDaneWszystkichAdresatow (vector <Adresat> &Adresaci)
 
         i++;
     }
-  Sleep(3000);
+    Sleep(3000);
 }
 
-void ZapiszStruktureAdresaciDoPliku (vector <Adresat> &Adresaci)
-{
-
-    fstream plik;
-    if(plik.good())
-    {
-        plik.open("Adresaci.txt", fstream::out | fstream::trunc);
-
-        for(int i=0; i<Adresaci.size(); i++)
-        {
-            plik<<Adresaci[i].id<<"|"<<Adresaci[i].imie<<"|"<<Adresaci[i].nazwisko<<"|"<<Adresaci[i].numerTelefonu<<"|"<<Adresaci[i].adres<<"|"<<Adresaci[i].email<<"|"<<endl;
-        }
-        plik.close();
-
-    }
-}
 
 
 void wczytajDaneZPlikuDoStrukturyAdresaci (vector <Adresat> &Adresaci)
@@ -448,6 +432,46 @@ void usunAdresata (vector <Adresat> &Adresaci)
 
                 Adresaci.erase(Adresaci.begin() + i);
 
+                string linia;
+                fstream plik;
+                plik.open("Adresaci.txt", ios::in);
+                // plik.clear();
+                //plik.seekg(0);
+
+                fstream nowyPlik;
+                nowyPlik.open("Adresaci_tymczasowy.txt",ios::out);
+
+                while ( getline( plik, linia ) )
+                {
+
+                    char *pch;
+                    string tablica[3];
+                    int j =0;
+
+                    char * linijka= new char[linia.length()+1];
+                    strcpy (linijka, linia.c_str());
+
+                    pch = strtok (linijka, "|\n\r\t");
+                    while (pch != NULL && j<3)
+                    {
+                        tablica[j] = ("%s", pch);
+                        pch = strtok (NULL, "|\n\r\t");
+                        j++;
+                    }
+
+                    int id_adresata = atoi(tablica[0].c_str());
+
+                    if (id_adresata == id)
+                    continue;
+
+                    else
+                        nowyPlik <<linia<< endl;
+                }
+                plik.close();
+                nowyPlik.close();
+                remove( "Adresaci.txt" );
+                rename( "Adresaci_tymczasowy.txt", "Adresaci.txt" );
+
 
                 cout << "Adresat usuniety. " << endl;
                 Sleep(1000);
@@ -455,7 +479,7 @@ void usunAdresata (vector <Adresat> &Adresaci)
         }
     }
 
-    ZapiszStruktureAdresaciDoPliku (Adresaci);
+
 }
 
 
@@ -474,6 +498,7 @@ void edytujAdresata (vector <Adresat> &Adresaci)
     {
         if (Adresaci[i].id == id)
         {
+
             cout << endl;
             cout << "1 - imie" << endl;
             cout << "2 - nazwisko" << endl;
@@ -552,76 +577,48 @@ void edytujAdresata (vector <Adresat> &Adresaci)
                 Sleep(1500);
             }
 
-            int nr_linii = 1;
-
             string linia;
-            Adresat adresat;
-
             fstream plik;
             plik.open("Adresaci.txt", ios::in);
+            // plik.clear();
+            //plik.seekg(0);
+
             fstream nowyPlik;
             nowyPlik.open("Adresaci_tymczasowy.txt",ios::out);
 
-//            cin.clear();
+            while ( getline( plik, linia ) )
+            {
 
-                while ( getline( plik, linia ) )
+                char *pch;
+                string tablica[3];
+                int j =0;
+
+                char * linijka= new char[linia.length()+1];
+                strcpy (linijka, linia.c_str());
+
+                pch = strtok (linijka, "|\n\r\t");
+                while (pch != NULL && j<3)
                 {
-                    cout << "I do get here" <<endl;
-                    Sleep(1000);
-                    char linijka[linia.length()];
-
-                    for (int j =0; j<linia.length(); j++)
-                    {
-                        linijka[j] = linia[j];
-                    }
-
-                    char *pch;
-                    string tablica[7];
-                    int i =0;
-
-                    pch = strtok (linijka, "|\n\r\t");
-                    while (pch != NULL && i<7)
-                    {
-
-                        tablica[i] = ("%s", pch);
-                        pch = strtok (NULL, "|");
-                        i++;
-                    }
-
-                    adresat.id = atoi(tablica[0].c_str());
-
-                    int pomocniczaZmienna = atoi(tablica[1].c_str());
-
-                    adresat.imie = tablica[2];
-
-                    adresat.nazwisko = tablica[3];
-
-                    adresat.numerTelefonu = tablica[4];
-
-                    adresat.email = tablica[5];
-
-                    adresat.adres = tablica[6];
-
-
-                    if ((adresat.id == id) && (pomocniczaZmienna == idZalogowanegoUzytkownika))
-                    {
-                      nowyPlik <<Adresaci[i].id<<"|"<<idZalogowanegoUzytkownika<<"|"<<Adresaci[i].imie<<"|"<<Adresaci[i].nazwisko<<"|"<<Adresaci[i].numerTelefonu<<"|"<<Adresaci[i].adres<<"|"<<Adresaci[i].email<<"|"<<endl;
-                    }
-
-                    else
-                        nowyPlik <<linia<< endl;
-
-                    nr_linii++;
-
+                    tablica[j] = ("%s", pch);
+                    pch = strtok (NULL, "|\n\r\t");
+                    j++;
                 }
+
+                int id_adresata = atoi(tablica[0].c_str());
+
+                if (id_adresata == id)
+                {
+                    nowyPlik <<Adresaci[i].id<<"|"<<idZalogowanegoUzytkownika<<"|"<<Adresaci[i].imie<<"|"<<Adresaci[i].nazwisko<<"|"<<Adresaci[i].numerTelefonu<<"|"<<Adresaci[i].adres<<"|"<<Adresaci[i].email<<"|"<<endl;
+                }
+                else
+                    nowyPlik <<linia<< endl;
+            }
             plik.close();
             nowyPlik.close();
             remove( "Adresaci.txt" );
-            rename( "Adresaci_tymczasowy.txt" , "Adresaci.txt" );
-
-            }
+            rename( "Adresaci_tymczasowy.txt", "Adresaci.txt" );
         }
-
+    }
 }
 
 
@@ -678,8 +675,6 @@ int main()
 
         else
         {
-
-            //wczytajDaneZPlikuDoStrukturyAdresaci(Adresaci);
 
             char wybor;
             system ("cls");
