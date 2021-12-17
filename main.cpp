@@ -42,16 +42,22 @@ void wczytajDaneZPlikuDoStrukturyUzytkownicy (vector <Uzytkownik> &uzytkownicy)
 
         while (getline(plik, linia))
         {
-            char linijka[linia.length()];
-
-            for (int j =0; j<linia.length(); j++)
-            {
-                linijka[j] = linia[j];
-            }
 
             char *pch;
             string tablica[3];
-            int i =0;
+            int j =0;
+
+            char * linijka= new char[linia.length()+1];
+            strcpy (linijka, linia.c_str());
+
+            pch = strtok (linijka, "|\n\r\t");
+            while (pch != NULL && j<3)
+            {
+                tablica[j] = ("%s", pch);
+                pch = strtok (NULL, "|\n\r\t");
+                j++;
+            }
+            int i = 0;
 
             pch = strtok (linijka, "|\n\r\t");
             while (pch != NULL && i<3)
@@ -148,6 +154,7 @@ void rejestracja (vector <Uzytkownik> &uzytkownicy)
     }
 
     cout << "Podaj haslo: "<< endl;
+    cin.clear();
     cin >> haslo;
 
     max_id_uzytkownika++;
@@ -462,7 +469,7 @@ void usunAdresata (vector <Adresat> &Adresaci)
                     int id_adresata = atoi(tablica[0].c_str());
 
                     if (id_adresata == id)
-                    continue;
+                        continue;
 
                     else
                         nowyPlik <<linia<< endl;
@@ -475,8 +482,11 @@ void usunAdresata (vector <Adresat> &Adresaci)
 
                 cout << "Adresat usuniety. " << endl;
                 Sleep(1000);
+
             }
+
         }
+        break;
     }
 
 
@@ -735,6 +745,8 @@ int main()
             else if (wybor == '8')
             {
                 idZalogowanegoUzytkownika = 0;
+
+                Adresaci.erase(Adresaci.begin(),Adresaci.end());
 
             }
 
